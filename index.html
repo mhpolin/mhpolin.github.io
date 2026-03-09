@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Software Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0b0f1a;
+      --navy2:   #111827;
+      --navy3:   #1c2535;
+      --border:  #1f2d42;
+      --gold:    #c9a84c;
+      --gold2:   #e8c96a;
+      --white:   #f0ece4;
+      --muted:   #7a8799;
+      --accent:  #3d6b9e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 4rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      border-color: var(--border);
+      background: rgba(11,15,26,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 4rem 6rem;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(61,107,158,0.18) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 600;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      max-width: 800px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      margin-top: 1.8rem;
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+    .hero-cta {
+      margin-top: 2.8rem;
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+    .btn {
+      padding: 0.8rem 2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem; right: 4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
+    }
+    .scroll-line {
+      width: 50px;
+      height: 1px;
+      background: var(--gold);
+      transform-origin: left;
+      animation: growLine 1s ease 1.4s both;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+    .section-label span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 180px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    /* ── SKILLS ── */
+    #skills .skills-intro {
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 3rem;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .skill-card.visible {
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .skill-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+    }
+    .skill-icon {
+      width: 40px; height: 40px;
+      border-radius: 2px;
+      background: rgba(201,168,76,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.2rem;
+    }
+    .skill-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .skill-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1.4rem;
+    }
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .tag:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── PROJECTS ── */
+    #projects { border-top: 1px solid var(--border); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card.visible { animation: fadeUp 0.6s ease forwards; }
+    .project-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+
+    .project-header {
+      padding: 2rem 2rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .project-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+    .project-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      margin-left: 1rem;
+      transition: color 0.2s;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.1em;
+    }
+    .project-links a:hover { color: var(--gold); }
+
+    .project-body { padding: 1.2rem 2rem 2rem; flex: 1; }
+    .project-body h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .project-body p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+    .project-footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    /* ── FEATURED PROJECT ── */
+    .project-card.featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+    }
+    .featured-accent {
+      width: 6px;
+      background: linear-gradient(180deg, var(--gold) 0%, var(--accent) 100%);
+      flex-shrink: 0;
+    }
+    .featured-content { flex: 1; display: flex; flex-direction: column; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 4rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes growLine {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .hero { padding: 0 1.5rem 5rem; }
+      section { padding: 5rem 1.5rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+      .project-card.featured { flex-direction: column; }
+      .featured-accent { width: 100%; height: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Mafruza.</a>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="mailto:you@email.com">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+
+    <p class="hero-eyebrow">Mafruza Haque Polin — Software Developer</p>
+    <h1>Crafting <em>reliable</em><br>software systems.</h1>
+    <p class="hero-sub">
+      Full-stack developer with expertise in JavaScript, Python, C#, and data-driven web applications. Currently pursuing M.Sc. Automotive Software Engineering at TU Chemnitz.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="mailto:you@email.com" class="btn btn-outline">Get in Touch</a>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label"><span>01 / Expertise</span></div>
+    <h2 class="section-title">Technical Skills</h2>
+    <p class="skills-intro">
+      Experienced across the full stack — from frontend interfaces and REST APIs to database design, automated testing, and CI/CD workflows.
+    </p>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">⚡</div>
+        <h3>Programming Languages</h3>
+        <p>Building web and desktop applications across the full stack using modern, industry-standard languages.</p>
+        <div class="skill-tags">
+          <span class="tag">JavaScript</span>
+          <span class="tag">Python</span>
+          <span class="tag">Java</span>
+          <span class="tag">C#</span>
+          <span class="tag">PHP</span>
+          <span class="tag">HTML/CSS</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-icon">🗄</div>
+        <h3>Frameworks & Databases</h3>
+        <p>Developing with modern frameworks and designing efficient relational database schemas for web applications.</p>
+        <div class="skill-tags">
+          <span class="tag">ReactJS</span>
+          <span class="tag">Selenium</span>
+          <span class="tag">TestNG</span>
+          <span class="tag">MySQL</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">WordPress</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-icon">🔧</div>
+        <h3>Tools & Engineering</h3>
+        <p>Practitioner of agile development, test-driven development, CI/CD pipelines, and solid engineering workflows.</p>
+        <div class="skill-tags">
+          <span class="tag">GitHub</span>
+          <span class="tag">Jenkins</span>
+          <span class="tag">Jira</span>
+          <span class="tag">Postman</span>
+          <span class="tag">RESTful APIs</span>
+          <span class="tag">Agile / TDD</span>
+          <span class="tag">ISTQB Certified</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label"><span>02 / Work</span></div>
+    <h2 class="section-title">Selected Projects</h2>
+
+    <div class="projects-grid">
+
+      <!-- Featured -->
+      <div class="project-card featured">
+        <div class="featured-accent"></div>
+        <div class="featured-content">
+          <div class="project-header">
+            <span class="project-num">Featured ✦</span>
+            <div class="project-links">
+              <a href="#">GitHub ↗</a>
+            </div>
+          </div>
+          <div class="project-body">
+            <h3>Research Information Management System</h3>
+            <p>
+              Developed a full RIM system for TU Chemnitz enabling users to search for researchers and publications across specific research domains. Implemented data crawling pipelines and RDF format conversion from multiple sources. Built with Python, HTML, CSS, and JavaScript.
+            </p>
+          </div>
+          <div class="project-footer">
+            <span class="tag">Python</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">RDF</span>
+            <span class="tag">Data Crawling</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-num">02</span>
+          <div class="project-links">
+            <a href="#">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>WinUI 3 Desktop App & Test Suite</h3>
+          <p>
+            Built a demo WinUI 3 Desktop C# application using the MVVM pattern, including comprehensive Unit Tests and UI Tests. Co-developed a REST API test suite in Golang and authored a developer guide for .NET Core C# WinUI 3 MVVM projects at MESO International GmbH.
+          </p>
+        </div>
+        <div class="project-footer">
+          <span class="tag">C#</span>
+          <span class="tag">.NET Core</span>
+          <span class="tag">WinUI 3</span>
+          <span class="tag">MVVM</span>
+          <span class="tag">Golang</span>
+          <span class="tag">REST API</span>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-num">03</span>
+          <div class="project-links">
+            <a href="#">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>Programming Error Analysis — Master's Thesis</h3>
+          <p>
+            Research study identifying common programming errors made by first-year CS students at TU Chemnitz. Analyzed Java and Python assignments via quantitative content analysis, categorizing recurring error patterns to inform improved pedagogy.
+          </p>
+        </div>
+        <div class="project-footer">
+          <span class="tag">Java</span>
+          <span class="tag">Python</span>
+          <span class="tag">Research</span>
+          <span class="tag">Data Analysis</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Mafruza Haque Polin — Built with HTML, CSS & JS</p>
+    <div class="footer-links">
+      <a href="https://github.com/yourusername">GitHub</a>
+      <a href="https://linkedin.com/in/yourprofile">LinkedIn</a>
+      <a href="mailto:you@email.com">Email</a>
+    </div>
+  </footer>
+
+  <script>
+    // Sticky nav
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Scroll-triggered card reveals
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 120);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.skill-card, .project-card').forEach(el => observer.observe(el));
+
+    // Smooth active nav link
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--gold)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
